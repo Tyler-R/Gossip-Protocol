@@ -50,5 +50,14 @@ public class Member {
 		}
 	}
 	
+	public void incremenetSequenceNumber() {
+		heartbeatSequenceNumber++;
+		lastUpdateTime = new GregorianCalendar().getTime();
+	}
+	
+	public String getNetworkMessage() {
+		return "[" + ipAddress + ":" + port + "-" + heartbeatSequenceNumber + "]";
+	}
+	
 	
 }
