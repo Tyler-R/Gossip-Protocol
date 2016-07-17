@@ -1,10 +1,11 @@
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 
-public class Member {
+public class Member implements Serializable {
 	private String ipAddress;
 	private int port;
 	

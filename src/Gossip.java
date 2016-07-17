@@ -18,6 +18,8 @@ public class Gossip {
 	
 	private int peersToUpdatePerInterval = 3; 
 	
+	private boolean stopped = false;
+	
 	
 	/**
 	 * initialize gossip protocol as the first node in the system.
@@ -40,23 +42,54 @@ public class Gossip {
 		Member initialTarget = new Member(ipAddress, port, 0);
 		memberList.put(initialTarget.getUniqueId(), initialTarget);
 		
-		Member x = new Member("127.0.0.1", 8082, 0);
+		/*Member x = new Member("127.0.0.1", 8082, 0);
 		memberList.put(x.getUniqueId(), x);
 		
 		Member y = new Member("127.0.0.1", 8083, 0);
-		memberList.put(y.getUniqueId(), y);
+		memberList.put(y.getUniqueId(), y);*/
 	}
 	
 	public void start() {
+		startSendThread();
+		startReceiveThread();
+	}
+	
+	private void startSendThread() {
 		new Thread(() -> {
-			network.sendMessage(self, "hello world");
-			sendMemberListToRandomMemeber();
-			
-			System.out.println("received message: " + network.receiveMessage());
-			
-			
-			System.out.println("received message: " + network.receiveMessage());
+			//while(!stopped) {
+				try {
+					Thread.sleep(1000);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				sendMemberListToRandomMemeber();
+			//}
 		}).start();
+	}
+	
+	private void startReceiveThread() {
+		new Thread(() -> {
+			try {
+				// TODO: REMOVE
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			while(!stopped) {
+				receiveMemberList();
+			}
+		}).start();
+	}
+	
+	public void stop() {
+		stopped = true;
+	}
+	
+	private void receiveMemberList() {
+		String message = network.receiveMessage().getNetworkMessage();
+		System.out.println(self.getUniqueId() + " - Received: " + message);
 	}
 	
 	private void sendMemberListToRandomMemeber() {
@@ -92,9 +125,12 @@ public class Gossip {
 		
 		
 		for (String targetKey : peersToUpdate) {
-			System.out.println("-" + targetKey);
 			Member target = memberList.get(targetKey);
-			network.sendMessage(target, target.getNetworkMessage());
+			System.out.println("-" + memberList.get(targetKey).getNetworkMessage());
+			
+			for(Member member : memberList.values()) {
+				network.sendMessage(target, member);
+			}
 		}
 	}
 	

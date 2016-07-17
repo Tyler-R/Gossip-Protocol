@@ -1,4 +1,9 @@
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -23,7 +28,30 @@ public class Network {
 	}
 	
 	public void sendMessage(Member target, String message) {
-		DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), target.getAddress(), target.getPort());
+		sendMessage(target, message.getBytes());
+		
+		System.out.println("send message '" + message + "' to " + target.getAddress() + ":" + target.getPort());
+	}
+	
+	public void sendMessage(Member target, Member message) {
+		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+		try {
+			ObjectOutput oo = new ObjectOutputStream(bStream); 
+			oo.writeObject(message);
+			oo.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		byte[] serializedMessage = bStream.toByteArray();
+		
+		sendMessage(target, serializedMessage);
+		
+		
+	}
+	
+	private void sendMessage(Member target, byte[] data) {
+		DatagramPacket packet = new DatagramPacket(data, data.length, target.getAddress(), target.getPort());
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
@@ -32,21 +60,33 @@ public class Network {
 			
 			System.exit(-1);
 		}
-		
-		System.out.println("send message '" + message + "' to " + target.getAddress() + ":" + target.getPort());
 	}
 	
-	public String receiveMessage() {
+	public Member receiveMessage() {
 		try {
 			socket.receive(receivePacket);
-			return new String(receivePacket.getData(), 0, receivePacket.getLength());
+			
+			ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(receivePacket.getData()));
+			Member message = null;
+			try {
+				message = (Member) iStream.readObject();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			iStream.close();
+			
+			return message;
+			
+			//return new String(receivePacket.getData(), 0, receivePacket.getLength());
 		} catch (IOException e) {
 			System.out.println("Could not properly receive message");
 			e.printStackTrace();
 		}
+		return null;
 		
-		assert false;
-		return "";
+		//assert false;
+		//return "";
 	}
 	
 }
