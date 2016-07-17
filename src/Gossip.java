@@ -16,9 +16,10 @@ public class Gossip {
 	private Member self = null;
 	private HashMap<String, Member> memberList = new HashMap<String, Member>();
 	
-	private int peersToUpdatePerInterval = 3; 
-	
 	private boolean stopped = false;
+	
+	// configurable values
+	private int peersToUpdatePerInterval = 3; 
 	
 	
 	/**
@@ -56,27 +57,21 @@ public class Gossip {
 	
 	private void startSendThread() {
 		new Thread(() -> {
-			//while(!stopped) {
+			while(!stopped) {
+				
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(500);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				sendMemberListToRandomMemeber();
-			//}
+			}
 		}).start();
 	}
 	
 	private void startReceiveThread() {
 		new Thread(() -> {
-			try {
-				// TODO: REMOVE
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			while(!stopped) {
 				receiveMemberList();
 			}
@@ -88,8 +83,15 @@ public class Gossip {
 	}
 	
 	private void receiveMemberList() {
-		String message = network.receiveMessage().getNetworkMessage();
-		System.out.println(self.getUniqueId() + " - Received: " + message);
+		Member newMemeber = network.receiveMessage();
+		System.out.println(self.getNetworkMessage() + " - Received: " + newMemeber.getNetworkMessage());
+		
+		Member member = memberList.get(newMemeber.getUniqueId());
+		if (member == null) { // member not in the list
+			memberList.put(newMemeber.getUniqueId(), newMemeber);
+		} else { // member was in the list
+			member.updateSequenceNumber(newMemeber.getSequenceNumber());
+		}
 	}
 	
 	private void sendMemberListToRandomMemeber() {
@@ -126,7 +128,7 @@ public class Gossip {
 		
 		for (String targetKey : peersToUpdate) {
 			Member target = memberList.get(targetKey);
-			System.out.println("-" + memberList.get(targetKey).getNetworkMessage());
+			System.out.println(self.getNetworkMessage() + " - sending: " + memberList.get(targetKey).getNetworkMessage());
 			
 			for(Member member : memberList.values()) {
 				network.sendMessage(target, member);
