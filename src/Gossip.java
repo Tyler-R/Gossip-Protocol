@@ -20,6 +20,8 @@ public class Gossip {
 	
 	// configurable values
 	private int peersToUpdatePerInterval = 3; 
+	private int updateFrequencyInMilliseconds = 500;
+	private int failureDetectionFrequency = 200;
 	
 	
 	/**
@@ -53,16 +55,15 @@ public class Gossip {
 	public void start() {
 		startSendThread();
 		startReceiveThread();
+		startFailureDetectionThread();
 	}
 	
 	private void startSendThread() {
 		new Thread(() -> {
 			while(!stopped) {
-				
 				try {
-					Thread.sleep(500);
+					Thread.sleep(updateFrequencyInMilliseconds);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				sendMemberListToRandomMemeber();
@@ -78,8 +79,34 @@ public class Gossip {
 		}).start();
 	}
 	
+	private void startFailureDetectionThread() {
+		new Thread(() -> {
+			while(!stopped) {
+				detectFailedMembers();
+				try {
+					Thread.sleep(failureDetectionFrequency);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	public void stop() {
 		stopped = true;
+	}
+	
+	private void detectFailedMembers() {
+		for (String key : memberList.keySet()) {
+			Member member = memberList.get(key);
+			
+			member.checkIfFailed();
+			
+			if(member.shouldCleanup()) {
+				memberList.remove(key);
+			}
+		}
 	}
 	
 	private void receiveMemberList() {
@@ -128,7 +155,7 @@ public class Gossip {
 		
 		for (String targetKey : peersToUpdate) {
 			Member target = memberList.get(targetKey);
-			System.out.println(self.getNetworkMessage() + " - sending: " + memberList.get(targetKey).getNetworkMessage());
+			System.out.println(self.getNetworkMessage() + " - sending to: " + memberList.get(targetKey).getNetworkMessage());
 			
 			for(Member member : memberList.values()) {
 				network.sendMessage(target, member);
