@@ -1,8 +1,7 @@
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 
 public class Member implements Serializable {
@@ -10,13 +9,15 @@ public class Member implements Serializable {
 	private int port;
 	
 	private long heartbeatSequenceNumber = 0;
-	private Date lastUpdateTime = null;
+	private LocalDateTime lastUpdateTime = null;
+	
+	private boolean hasFailed = false;
 	
 	public Member(String ipAddress, int port, long initialHearbeatSequenceNumber) {
 		this.ipAddress = ipAddress;
 		this.port = port;
-		
-		lastUpdateTime = new GregorianCalendar().getTime();
+				
+		lastUpdateTime = LocalDateTime.now();
 	}
 	
 	public InetAddress getAddress() {
@@ -47,14 +48,17 @@ public class Member implements Serializable {
 	public void updateSequenceNumber(long newSequenceNumber) {
 		if (newSequenceNumber > heartbeatSequenceNumber) {
 			heartbeatSequenceNumber = newSequenceNumber;
-			lastUpdateTime = new GregorianCalendar().getTime();
+			lastUpdateTime = LocalDateTime.now();
+			hasFailed = false;
 		}
 	}
 	
 	public void incremenetSequenceNumber() {
 		heartbeatSequenceNumber++;
-		lastUpdateTime = new GregorianCalendar().getTime();
+		lastUpdateTime = LocalDateTime.now();
 	}
+	
+	
 	
 	public String getNetworkMessage() {
 		return "[" + ipAddress + ":" + port + "-" + heartbeatSequenceNumber + "]";
