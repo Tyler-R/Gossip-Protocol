@@ -27,6 +27,19 @@ public class Member implements Serializable {
 		return ipAddress;
 	}
 	
+	public InetAddress getInetAddress() {
+		try {
+			return InetAddress.getByName(ipAddress);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("You entered a bad IP address: " + ipAddress);
+		System.exit(-1);
+		return null;
+	}
+	
 	public int getPort() {
 		return port;
 	}

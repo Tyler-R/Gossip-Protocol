@@ -51,7 +51,7 @@ public class Network {
 	}
 	
 	private void sendMessage(Member target, byte[] data) {
-		DatagramPacket packet = new DatagramPacket(data, data.length, target.getAddress(), target.getPort());
+		DatagramPacket packet = new DatagramPacket(data, data.length, target.getInetAddress(), target.getPort());
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
