@@ -1,4 +1,5 @@
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -163,6 +164,25 @@ public class Gossip {
 		}
 	}
 	
+	public ArrayList<InetSocketAddress> getAliveMembers() {
+		// assume that most members are alive in the list and so 
+		// we set the initial size of the list to return to prevent arrayList resizing.
+		int initialSize = memberList.size();
+		ArrayList<InetSocketAddress> aliveMembers = new ArrayList<InetSocketAddress>(initialSize);
+		
+		
+		for (String key : memberList.keySet()) {
+			Member member = memberList.get(key);
+			if (!member.hasFailed()) {
+				String ipAddress = member.getAddress();
+				int port = member.getPort();
+				
+				aliveMembers.add(new InetSocketAddress(ipAddress, port));
+			}
+		}
+		
+		return aliveMembers;
+	}
 	
 	
 }
