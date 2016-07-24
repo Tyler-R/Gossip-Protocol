@@ -13,10 +13,13 @@ public class Member implements Serializable {
 	
 	private boolean hasFailed = false;
 	
+	private long failureTimeout = 5;
+	private long cleanupTimeout = 10;
+	
 	public Member(String ipAddress, int port, long initialHearbeatSequenceNumber) {
 		this.ipAddress = ipAddress;
 		this.port = port;
-				
+		
 		lastUpdateTime = LocalDateTime.now();
 	}
 	
@@ -56,6 +59,28 @@ public class Member implements Serializable {
 	public void incremenetSequenceNumber() {
 		heartbeatSequenceNumber++;
 		lastUpdateTime = LocalDateTime.now();
+	}
+	
+	public void checkIfFailed() {
+		LocalDateTime failureTime = lastUpdateTime.plusSeconds(failureTimeout);
+		LocalDateTime now = LocalDateTime.now();
+		
+		hasFailed = failureTime.isAfter(now);
+	}
+	
+	public boolean shouldCleanup() {
+		if (hasFailed) {
+			LocalDateTime cleanupTime = lastUpdateTime.plusSeconds(cleanupTimeout);
+			LocalDateTime now = LocalDateTime.now();
+			
+			return cleanupTime.isAfter(now);
+		} else {
+			return false;			
+		}
+	}
+	
+	public boolean hasFailed() {
+		return hasFailed;
 	}
 	
 	
