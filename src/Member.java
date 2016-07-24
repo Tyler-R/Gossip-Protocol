@@ -23,17 +23,8 @@ public class Member implements Serializable {
 		lastUpdateTime = LocalDateTime.now();
 	}
 	
-	public InetAddress getAddress() {
-		try {
-			return InetAddress.getByName(ipAddress);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("You entered a bad IP address: " + ipAddress);
-		System.exit(-1);
-		return null;
+	public String getAddress() {
+		return ipAddress;
 	}
 	
 	public int getPort() {
