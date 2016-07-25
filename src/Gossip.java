@@ -192,5 +192,21 @@ public class Gossip {
 		return aliveMembers;
 	}
 	
+	public ArrayList<InetSocketAddress> getFailedMembers() {
+		ArrayList<InetSocketAddress> failedMembers = new ArrayList<InetSocketAddress>();
+		
+		for (String key : memberList.keySet()) {
+			Member member = memberList.get(key);
+			if (member.hasFailed()) {
+				String ipAddress = member.getAddress();
+				int port = member.getPort();
+				
+				failedMembers.add(new InetSocketAddress(ipAddress, port));
+			}
+		}
+		
+		return failedMembers;
+	}
+	
 	
 }
