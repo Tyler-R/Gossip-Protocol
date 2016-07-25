@@ -211,5 +211,22 @@ public class Gossip {
 		return failedMembers;
 	}
 	
+	public ArrayList<InetSocketAddress> getAllMembers() {
+		// used to prevent resizing of ArrayList.
+		int initialSize = memberList.size();
+		ArrayList<InetSocketAddress> allMembers = new ArrayList<InetSocketAddress>(initialSize);
+		
+		for (String key : memberList.keySet()) {
+			Member member = memberList.get(key);
+			
+			String ipAddress = member.getAddress();
+			int port = member.getPort();
+			
+			allMembers.add(new InetSocketAddress(ipAddress, port));
+		
+		}
+	
+		return allMembers;
+	}
 	
 }
