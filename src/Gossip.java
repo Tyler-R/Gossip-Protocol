@@ -23,7 +23,7 @@ public class Gossip {
 	private int peersToUpdatePerInterval = 3; 
 	private int updateFrequencyInMilliseconds = 500;
 	private int failureDetectionFrequency = 200;
-	
+		
 	
 	/**
 	 * initialize gossip protocol as the first node in the system.
@@ -67,6 +67,7 @@ public class Gossip {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
 				sendMemberListToRandomMemeber();
 			}
 		}).start();
@@ -91,7 +92,7 @@ public class Gossip {
 					e.printStackTrace();
 				}
 			}
-		});
+		}).start();
 	}
 	
 	public void stop() {
@@ -99,13 +100,18 @@ public class Gossip {
 	}
 	
 	private void detectFailedMembers() {
-		for (String key : memberList.keySet()) {
+		String[] keys = new String[memberList.size()];
+		memberList.keySet().toArray(keys);
+				
+		for (String key : keys) {
 			Member member = memberList.get(key);
 			
 			member.checkIfFailed();
 			
 			if(member.shouldCleanup()) {
-				memberList.remove(key);
+				synchronized(memberList) {
+					memberList.remove(key);
+				}
 			}
 		}
 	}
@@ -116,7 +122,9 @@ public class Gossip {
 		
 		Member member = memberList.get(newMemeber.getUniqueId());
 		if (member == null) { // member not in the list
-			memberList.put(newMemeber.getUniqueId(), newMemeber);
+			synchronized(memberList) {
+				memberList.put(newMemeber.getUniqueId(), newMemeber);
+			}
 		} else { // member was in the list
 			member.updateSequenceNumber(newMemeber.getSequenceNumber());
 		}
