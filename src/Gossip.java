@@ -197,6 +197,9 @@ public class Gossip {
 		
 		for (String key : memberList.keySet()) {
 			Member member = memberList.get(key);
+			
+			member.checkIfFailed();
+			
 			if (member.hasFailed()) {
 				String ipAddress = member.getAddress();
 				int port = member.getPort();
