@@ -13,8 +13,8 @@ public class Member implements Serializable {
 	
 	private boolean hasFailed = false;
 	
-	private long failureTimeout = 5;
-	private long cleanupTimeout = 10;
+	private long failureTimeout = 2;
+	private long cleanupTimeout = 2;
 	
 	public Member(String ipAddress, int port, long initialHearbeatSequenceNumber) {
 		this.ipAddress = ipAddress;
@@ -69,7 +69,7 @@ public class Member implements Serializable {
 		LocalDateTime failureTime = lastUpdateTime.plusSeconds(failureTimeout);
 		LocalDateTime now = LocalDateTime.now();
 		
-		hasFailed = failureTime.isAfter(now);
+		hasFailed = now.isAfter(failureTime);
 	}
 	
 	public boolean shouldCleanup() {
@@ -77,7 +77,7 @@ public class Member implements Serializable {
 			LocalDateTime cleanupTime = lastUpdateTime.plusSeconds(cleanupTimeout);
 			LocalDateTime now = LocalDateTime.now();
 			
-			return cleanupTime.isAfter(now);
+			return now.isAfter(cleanupTime);
 		} else {
 			return false;			
 		}
