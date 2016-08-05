@@ -127,6 +127,10 @@ public class Gossip {
 			if(member.shouldCleanup()) {
 				synchronized(memberList) {
 					memberList.remove(key);
+					
+					if (onRemovedMember != null) {
+						onRemovedMember.update(member.getSocketAddress());
+					}
 				}
 			}
 		}
@@ -249,15 +253,19 @@ public class Gossip {
 	}
 	
 	
-	public void setOnNewMember(GossipUpdater onNewMember) {
+	public void setOnNewMemberHandler(GossipUpdater onNewMember) {
 		this.onNewMember = onNewMember;
 	}
 	
-	public void setOnFailedMember(GossipUpdater onFailedMember) {
+	public void setOnFailedMemberHandler(GossipUpdater onFailedMember) {
 		this.onFailedMember = onFailedMember;
 	}
 	
-	public void setOnRevivedMember(GossipUpdater onRevivedMember) {
+	public void setOnRevivedMemberHandler(GossipUpdater onRevivedMember) {
 		this.onRevivedMember = onRevivedMember;
+	}
+	
+	public void setOnRemoveMemberHandler(GossipUpdater onRemovedMember) {
+		this.onRemovedMember = onRemovedMember;
 	}
 }
