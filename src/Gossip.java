@@ -106,7 +106,18 @@ public class Gossip {
 		for (String key : keys) {
 			Member member = memberList.get(key);
 			
+			boolean hadFailed = member.hasFailed();
+			
 			member.checkIfFailed();
+			
+			// node failure status has changed
+			if (member.hasFailed() != hadFailed) {
+				if (member.hasFailed()) {
+					if(onFailedMember != null) {
+						onFailedMember.update(member.getSocketAddress());
+					}
+				}
+			}
 			
 			if(member.shouldCleanup()) {
 				synchronized(memberList) {
@@ -235,6 +246,10 @@ public class Gossip {
 	
 	public void setOnNewMember(GossipUpdater onNewMember) {
 		this.onNewMember = onNewMember;
+	}
+	
+	public void setOnFailedMember(GossipUpdater onFailedMember) {
+		this.onFailedMember = onFailedMember;
 	}
 	
 }
