@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
@@ -38,6 +39,10 @@ public class Member implements Serializable {
 		System.out.println("You entered a bad IP address: " + ipAddress);
 		System.exit(-1);
 		return null;
+	}
+	
+	public InetSocketAddress getSocketAddress() {
+		return new InetSocketAddress(ipAddress, port);
 	}
 	
 	public int getPort() {
