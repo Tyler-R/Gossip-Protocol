@@ -78,7 +78,7 @@ public class Member implements Serializable {
 	
 	public boolean shouldCleanup() {
 		if (hasFailed) {
-			LocalDateTime cleanupTime = lastUpdateTime.plusSeconds(cleanupTimeout);
+			LocalDateTime cleanupTime = lastUpdateTime.plusSeconds(failureTimeout + cleanupTimeout);
 			LocalDateTime now = LocalDateTime.now();
 			
 			return now.isAfter(cleanupTime);
