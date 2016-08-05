@@ -61,7 +61,6 @@ public class Member implements Serializable {
 		if (newSequenceNumber > heartbeatSequenceNumber) {
 			heartbeatSequenceNumber = newSequenceNumber;
 			lastUpdateTime = LocalDateTime.now();
-			hasFailed = false;
 		}
 	}
 	
