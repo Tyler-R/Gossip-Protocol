@@ -124,6 +124,9 @@ public class Gossip {
 		if (member == null) { // member not in the list
 			synchronized(memberList) {
 				memberList.put(newMemeber.getUniqueId(), newMemeber);
+				if (onNewMember != null) {
+					onNewMember.update(newMemeber.getSocketAddress());
+				}
 			}
 		} else { // member was in the list
 			member.updateSequenceNumber(newMemeber.getSequenceNumber());
@@ -227,6 +230,11 @@ public class Gossip {
 		}
 	
 		return allMembers;
+	}
+	
+	
+	public void setOnNewMember(GossipUpdater onNewMember) {
+		this.onNewMember = onNewMember;
 	}
 	
 }
