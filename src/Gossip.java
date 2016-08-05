@@ -24,6 +24,7 @@ public class Gossip {
 	private GossipUpdater onNewMember = null;
 	private GossipUpdater onFailedMember = null;
 	private GossipUpdater onRemovedMember = null;
+	private GossipUpdater onRevivedMember = null;
 	
 	/**
 	 * initialize gossip protocol as the first node in the system.
@@ -115,6 +116,10 @@ public class Gossip {
 				if (member.hasFailed()) {
 					if(onFailedMember != null) {
 						onFailedMember.update(member.getSocketAddress());
+					}
+				} else {
+					if(onRevivedMember != null) {
+						onRevivedMember.update(member.getSocketAddress());
 					}
 				}
 			}
@@ -252,4 +257,7 @@ public class Gossip {
 		this.onFailedMember = onFailedMember;
 	}
 	
+	public void setOnRevivedMember(GossipUpdater onRevivedMember) {
+		this.onRevivedMember = onRevivedMember;
+	}
 }
