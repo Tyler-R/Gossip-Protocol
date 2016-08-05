@@ -20,7 +20,10 @@ public class Gossip {
 	private int peersToUpdatePerInterval = 3; 
 	private int updateFrequencyInMilliseconds = 500;
 	private int failureDetectionFrequency = 200;
-		
+	
+	private GossipUpdater onNewMember = null;
+	private GossipUpdater onFailedMember = null;
+	private GossipUpdater onRemovedMember = null;
 	
 	/**
 	 * initialize gossip protocol as the first node in the system.
