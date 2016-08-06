@@ -1,4 +1,4 @@
-package src.main.java.gossip;
+package main.java.gossip;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

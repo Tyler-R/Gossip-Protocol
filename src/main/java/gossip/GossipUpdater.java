@@ -1,4 +1,4 @@
-package src.main.java.gossip;
+package main.java.gossip;
 import java.net.InetSocketAddress;
 
 
