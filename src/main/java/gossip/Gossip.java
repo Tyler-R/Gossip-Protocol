@@ -139,7 +139,10 @@ public class Gossip {
 		if (member == null) { // member not in the list
 			synchronized(memberList) {
 				newMember.setConfig(config);
+				newMember.updateLastUpdateTime();
+				
 				memberList.put(newMember.getUniqueId(), newMember);
+				
 				if (onNewMember != null) {
 					onNewMember.update(newMember.getSocketAddress());
 				}

@@ -22,7 +22,7 @@ public class Member implements Serializable {
 		this.port = port;
 		this.config = config;
 		
-		lastUpdateTime = LocalDateTime.now();
+		updateLastUpdateTime();
 	}
 	
 	public void setConfig(Config config) {
@@ -65,13 +65,17 @@ public class Member implements Serializable {
 	public void updateSequenceNumber(long newSequenceNumber) {
 		if (newSequenceNumber > heartbeatSequenceNumber) {
 			heartbeatSequenceNumber = newSequenceNumber;
-			lastUpdateTime = LocalDateTime.now();
+			updateLastUpdateTime();
 		}
+	}
+	
+	public void updateLastUpdateTime() {
+		lastUpdateTime = LocalDateTime.now();
 	}
 	
 	public void incremenetSequenceNumber() {
 		heartbeatSequenceNumber++;
-		lastUpdateTime = LocalDateTime.now();
+		updateLastUpdateTime();
 	}
 	
 	public void checkIfFailed() {
