@@ -47,12 +47,6 @@ public class Gossip {
 		
 		Member initialTarget = new Member(ipAddress, port, 0);
 		memberList.put(initialTarget.getUniqueId(), initialTarget);
-		
-		/*Member x = new Member("127.0.0.1", 8082, 0);
-		memberList.put(x.getUniqueId(), x);
-		
-		Member y = new Member("127.0.0.1", 8083, 0);
-		memberList.put(y.getUniqueId(), y);*/
 	}
 	
 	public void start() {
