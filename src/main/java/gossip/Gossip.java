@@ -34,7 +34,7 @@ public class Gossip {
 		this.listeningPort = listeningPort;
 		this.network = new Network(listeningPort);
 		
-		self = new Member(localIpAddress, listeningPort, 0);
+		self = new Member(localIpAddress, listeningPort, 0, config);
 		memberList.put(self.getUniqueId(), self);
 	}
 	
@@ -45,7 +45,7 @@ public class Gossip {
 	public Gossip(String localIpAddress, int listeningPort, String ipAddress, int port, Config config) {
 		this(localIpAddress, listeningPort, config);
 		
-		Member initialTarget = new Member(ipAddress, port, 0);
+		Member initialTarget = new Member(ipAddress, port, 0, config);
 		memberList.put(initialTarget.getUniqueId(), initialTarget);
 	}
 	
@@ -138,6 +138,7 @@ public class Gossip {
 		Member member = memberList.get(newMemeber.getUniqueId());
 		if (member == null) { // member not in the list
 			synchronized(memberList) {
+				newMemeber.setConfig(config);
 				memberList.put(newMemeber.getUniqueId(), newMemeber);
 				if (onNewMember != null) {
 					onNewMember.update(newMemeber.getSocketAddress());

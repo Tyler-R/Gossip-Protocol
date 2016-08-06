@@ -1,6 +1,8 @@
 package main.java.gossip;
 
-public class Config {
+import java.io.Serializable;
+
+public class Config implements Serializable {
 	
 	// Values for members class to use
 	public final int MEMBER_FAILURE_TIMEOUT;

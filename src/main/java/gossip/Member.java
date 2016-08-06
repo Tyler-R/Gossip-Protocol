@@ -15,14 +15,18 @@ public class Member implements Serializable {
 	
 	private boolean hasFailed = false;
 	
-	private long failureTimeout = 2;
-	private long cleanupTimeout = 2;
+	private Config config;
 	
-	public Member(String ipAddress, int port, long initialHearbeatSequenceNumber) {
+	public Member(String ipAddress, int port, long initialHearbeatSequenceNumber, Config config) {
 		this.ipAddress = ipAddress;
 		this.port = port;
+		this.config = config;
 		
 		lastUpdateTime = LocalDateTime.now();
+	}
+	
+	public void setConfig(Config config) {
+		this.config = config;
 	}
 	
 	public String getAddress() {
@@ -71,7 +75,7 @@ public class Member implements Serializable {
 	}
 	
 	public void checkIfFailed() {
-		LocalDateTime failureTime = lastUpdateTime.plusSeconds(failureTimeout);
+		LocalDateTime failureTime = lastUpdateTime.plusSeconds(config.MEMBER_FAILURE_TIMEOUT);
 		LocalDateTime now = LocalDateTime.now();
 		
 		hasFailed = now.isAfter(failureTime);
@@ -79,7 +83,7 @@ public class Member implements Serializable {
 	
 	public boolean shouldCleanup() {
 		if (hasFailed) {
-			LocalDateTime cleanupTime = lastUpdateTime.plusSeconds(failureTimeout + cleanupTimeout);
+			LocalDateTime cleanupTime = lastUpdateTime.plusSeconds(config.MEMBER_FAILURE_TIMEOUT + config.MEMBER_CLEANUP_TIMEOUT);
 			LocalDateTime now = LocalDateTime.now();
 			
 			return now.isAfter(cleanupTime);
