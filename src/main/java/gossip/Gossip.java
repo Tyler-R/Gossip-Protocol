@@ -132,20 +132,20 @@ public class Gossip {
 	}
 	
 	private void receiveMemberList() {
-		Member newMemeber = network.receiveMessage();
-		System.out.println(self.getNetworkMessage() + " - Received: " + newMemeber.getNetworkMessage());
+		Member newMember = network.receiveMessage();
+		System.out.println(self.getNetworkMessage() + " - Received: " + newMember.getNetworkMessage());
 		
-		Member member = memberList.get(newMemeber.getUniqueId());
+		Member member = memberList.get(newMember.getUniqueId());
 		if (member == null) { // member not in the list
 			synchronized(memberList) {
-				newMemeber.setConfig(config);
-				memberList.put(newMemeber.getUniqueId(), newMemeber);
+				newMember.setConfig(config);
+				memberList.put(newMember.getUniqueId(), newMember);
 				if (onNewMember != null) {
-					onNewMember.update(newMemeber.getSocketAddress());
+					onNewMember.update(newMember.getSocketAddress());
 				}
 			}
 		} else { // member was in the list
-			member.updateSequenceNumber(newMemeber.getSequenceNumber());
+			member.updateSequenceNumber(newMember.getSequenceNumber());
 		}
 	}
 	
