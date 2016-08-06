@@ -1,3 +1,4 @@
+package src.main.java.gossip;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

@@ -1,3 +1,5 @@
+package src.test.java.gossip;
+import src.main.java.gossip.Gossip;
 
 public class Main {
 	public static void main(String[] args) {
