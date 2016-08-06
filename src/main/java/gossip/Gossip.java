@@ -18,9 +18,7 @@ public class Gossip {
 	private boolean stopped = false;
 	
 	// configurable values
-	private int peersToUpdatePerInterval = 3; 
-	private int updateFrequencyInMilliseconds = 500;
-	private int failureDetectionFrequency = 200;
+	Config config = null;
 	
 	private GossipUpdater onNewMember = null;
 	private GossipUpdater onFailedMember = null;
@@ -30,7 +28,9 @@ public class Gossip {
 	/**
 	 * initialize gossip protocol as the first node in the system.
 	 * */
-	public Gossip(String localIpAddress, int listeningPort) {
+	public Gossip(String localIpAddress, int listeningPort, Config config) {
+		this.config = config;
+		
 		this.listeningPort = listeningPort;
 		this.network = new Network(listeningPort);
 		
@@ -42,8 +42,8 @@ public class Gossip {
 	 * Connect to another node in the gossip protocol and 
 	 * begin fault tolerance monitoring.
 	 * */
-	public Gossip(String localIpAddress, int listeningPort, String ipAddress, int port) {
-		this(localIpAddress, listeningPort);
+	public Gossip(String localIpAddress, int listeningPort, String ipAddress, int port, Config config) {
+		this(localIpAddress, listeningPort, config);
 		
 		Member initialTarget = new Member(ipAddress, port, 0);
 		memberList.put(initialTarget.getUniqueId(), initialTarget);
@@ -59,7 +59,7 @@ public class Gossip {
 		new Thread(() -> {
 			while(!stopped) {
 				try {
-					Thread.sleep(updateFrequencyInMilliseconds);
+					Thread.sleep(config.UPDATE_FREQUENCY);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -82,7 +82,7 @@ public class Gossip {
 			while(!stopped) {
 				detectFailedMembers();
 				try {
-					Thread.sleep(failureDetectionFrequency);
+					Thread.sleep(config.FAILURE_DETECTION_FREQUENCY);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -154,7 +154,7 @@ public class Gossip {
 		List<String> peersToUpdate = new ArrayList<String>();
 		Object[] keys = memberList.keySet().toArray();
 		
-		if (keys.length < peersToUpdatePerInterval) {
+		if (keys.length < config.PEERS_TO_UPDATE_PER_INTERVAL) {
 			for (int i = 0; i < keys.length; i++) {
 				String key = (String) keys[i];
 				if (!key.equals(self.getUniqueId())) {
@@ -162,7 +162,7 @@ public class Gossip {
 				}
 			}
 		} else {
-			for (int i = 0; i < peersToUpdatePerInterval; i++) {
+			for (int i = 0; i < config.PEERS_TO_UPDATE_PER_INTERVAL; i++) {
 				boolean newTargetFound = false;
 				
 				while(!newTargetFound) {
