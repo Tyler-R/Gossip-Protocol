@@ -16,8 +16,6 @@ public class Gossip {
 	private Member self = null;
 	private ConcurrentHashMap<String, Member> memberList = new ConcurrentHashMap<String, Member>();
 	
-	private boolean stopped = false;
-	
 	// configurable values
 	Config config = null;
 	
@@ -25,6 +23,10 @@ public class Gossip {
 	private GossipUpdater onFailedMember = null;
 	private GossipUpdater onRemovedMember = null;
 	private GossipUpdater onRevivedMember = null;
+	
+	private Thread sendThread = null;
+	private Thread receiveThread = null;
+	private Thread failureDetectionThread = null;
 	
 	/**
 	 * initialize gossip protocol as the first node in the system.
@@ -57,30 +59,37 @@ public class Gossip {
 	}
 	
 	private void startSendThread() {
-		new Thread(() -> {
-			while(!stopped) {
+		sendThread = new Thread(() -> {
+			while(!Thread.currentThread().isInterrupted()) {
 				try {
 					Thread.sleep(config.UPDATE_FREQUENCY);
-				} catch (Exception e) {
+				} catch(InterruptedException e){
+			        Thread.currentThread().interrupt();
+			        break;
+			    } catch (Exception e) {
 					e.printStackTrace();
 				}
 				
 				sendMemberListToRandomMemeber();
 			}
-		}).start();
+		});
+		
+		sendThread.start();
 	}
 	
 	private void startReceiveThread() {
-		new Thread(() -> {
-			while(!stopped) {
+		receiveThread = new Thread(() -> {
+			while(!Thread.currentThread().isInterrupted()) {
 				receiveMemberList();
 			}
-		}).start();
+		});
+		
+		receiveThread.start();
 	}
 	
 	private void startFailureDetectionThread() {
-		new Thread(() -> {
-			while(!stopped) {
+		failureDetectionThread = new Thread(() -> {
+			while(!Thread.currentThread().isInterrupted()) {
 				detectFailedMembers();
 				try {
 					Thread.sleep(config.FAILURE_DETECTION_FREQUENCY);
@@ -89,11 +98,15 @@ public class Gossip {
 					e.printStackTrace();
 				}
 			}
-		}).start();
+		});
+		
+		failureDetectionThread.start();
 	}
 	
 	public void stop() {
-		stopped = true;
+		sendThread.interrupt();
+		receiveThread.interrupt();
+		failureDetectionThread.interrupt();
 	}
 	
 	private void detectFailedMembers() {
