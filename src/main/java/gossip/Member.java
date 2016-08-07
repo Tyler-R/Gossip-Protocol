@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 
 public class Member implements Serializable {
-	private String ipAddress;
-	private int port;
+	private final String IP_ADDRESS;
+	private final int PORT;
 	
 	private long heartbeatSequenceNumber = 0;
 	private LocalDateTime lastUpdateTime = null;
@@ -18,8 +18,8 @@ public class Member implements Serializable {
 	private Config config;
 	
 	public Member(String ipAddress, int port, long initialHearbeatSequenceNumber, Config config) {
-		this.ipAddress = ipAddress;
-		this.port = port;
+		IP_ADDRESS = ipAddress;
+		PORT = port;
 		this.config = config;
 		
 		updateLastUpdateTime();
@@ -30,32 +30,32 @@ public class Member implements Serializable {
 	}
 	
 	public String getAddress() {
-		return ipAddress;
+		return IP_ADDRESS;
 	}
 	
 	public InetAddress getInetAddress() {
 		try {
-			return InetAddress.getByName(ipAddress);
+			return InetAddress.getByName(IP_ADDRESS);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		System.out.println("You entered a bad IP address: " + ipAddress);
+		System.out.println("You entered a bad IP address: " + IP_ADDRESS);
 		System.exit(-1);
 		return null;
 	}
 	
 	public InetSocketAddress getSocketAddress() {
-		return new InetSocketAddress(ipAddress, port);
+		return new InetSocketAddress(IP_ADDRESS, PORT);
 	}
 	
 	public int getPort() {
-		return port;
+		return PORT;
 	}
 	
 	public String getUniqueId() {
-		return ipAddress + ":" + port;
+		return IP_ADDRESS + ":" + PORT;
 	}
 	
 	public long getSequenceNumber() {
@@ -103,7 +103,7 @@ public class Member implements Serializable {
 	
 	
 	public String getNetworkMessage() {
-		return "[" + ipAddress + ":" + port + "-" + heartbeatSequenceNumber + "]";
+		return "[" + IP_ADDRESS + ":" + PORT + "-" + heartbeatSequenceNumber + "]";
 	}
 	
 	
