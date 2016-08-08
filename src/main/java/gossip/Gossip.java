@@ -19,7 +19,7 @@ public class Gossip {
 	private boolean stopped = false;
 	
 	// configurable values
-	Config config = null;
+	private Config config = null;
 	
 	private GossipUpdater onNewMember = null;
 	private GossipUpdater onFailedMember = null;
