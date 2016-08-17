@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Gossip {
 	
-	public int listeningPort = 8080;
+	public final InetSocketAddress listeningAddress;
 	
 	private Network network;
 	
@@ -29,13 +29,13 @@ public class Gossip {
 	/**
 	 * initialize gossip protocol as the first node in the system.
 	 * */
-	public Gossip(String localIpAddress, int listeningPort, Config config) {
+	public Gossip(InetSocketAddress listeningAddress, Config config) {
 		this.config = config;
 		
-		this.listeningPort = listeningPort;
-		this.network = new Network(listeningPort);
+		this.listeningAddress = listeningAddress;
+		this.network = new Network(listeningAddress.getPort());
 		
-		self = new Member(localIpAddress, listeningPort, 0, config);
+		self = new Member(listeningAddress, 0, config);
 		memberList.put(self.getUniqueId(), self);
 	}
 	
@@ -43,10 +43,10 @@ public class Gossip {
 	 * Connect to another node in the gossip protocol and 
 	 * begin fault tolerance monitoring.
 	 * */
-	public Gossip(String localIpAddress, int listeningPort, String ipAddress, int port, Config config) {
-		this(localIpAddress, listeningPort, config);
+	public Gossip(InetSocketAddress listeningAddress, InetSocketAddress targetAddress, Config config) {
+		this(listeningAddress, config);
 		
-		Member initialTarget = new Member(ipAddress, port, 0, config);
+		Member initialTarget = new Member(targetAddress, 0, config);
 		memberList.put(initialTarget.getUniqueId(), initialTarget);
 	}
 	
