@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 
@@ -68,7 +69,7 @@ public class Member implements Serializable {
 	}
 	
 	public void checkIfFailed() {
-		LocalDateTime failureTime = lastUpdateTime.plusSeconds(config.MEMBER_FAILURE_TIMEOUT);
+		LocalDateTime failureTime = lastUpdateTime.plus(config.MEMBER_FAILURE_TIMEOUT);
 		LocalDateTime now = LocalDateTime.now();
 		
 		hasFailed = now.isAfter(failureTime);
@@ -76,7 +77,8 @@ public class Member implements Serializable {
 	
 	public boolean shouldCleanup() {
 		if (hasFailed) {
-			LocalDateTime cleanupTime = lastUpdateTime.plusSeconds(config.MEMBER_FAILURE_TIMEOUT + config.MEMBER_CLEANUP_TIMEOUT);
+			Duration cleanupTimeout = config.MEMBER_FAILURE_TIMEOUT.plus(config.MEMBER_CLEANUP_TIMEOUT);
+			LocalDateTime cleanupTime = lastUpdateTime.plus(cleanupTimeout);
 			LocalDateTime now = LocalDateTime.now();
 			
 			return now.isAfter(cleanupTime);

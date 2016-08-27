@@ -25,7 +25,7 @@ public class Gossip {
 	private GossipUpdater onFailedMember = null;
 	private GossipUpdater onRemovedMember = null;
 	private GossipUpdater onRevivedMember = null;
-	
+		
 	/**
 	 * initialize gossip protocol as the first node in the system.
 	 * */
@@ -60,7 +60,7 @@ public class Gossip {
 		new Thread(() -> {
 			while(!stopped) {
 				try {
-					Thread.sleep(config.UPDATE_FREQUENCY);
+					Thread.sleep(config.UPDATE_FREQUENCY.toMillis());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -83,7 +83,7 @@ public class Gossip {
 			while(!stopped) {
 				detectFailedMembers();
 				try {
-					Thread.sleep(config.FAILURE_DETECTION_FREQUENCY);
+					Thread.sleep(config.FAILURE_DETECTION_FREQUENCY.toMillis());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
