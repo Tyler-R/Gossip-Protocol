@@ -20,3 +20,22 @@ void setOnRemoveMemberHandler(GossipUpdater onRemovedMember)
 ````
 
 # Example
+```Java
+public static void main(String[] args) {
+  Config config = new Config(Duration.ofSeconds(2), Duration.ofSeconds(2), Duration.ofMillis(500), Duration.ofMillis(200), 3);
+  
+  Gossip firstNode = new Gossip(new InetSocketAddress("127.0.0.1", 8080), config);
+  
+  firstNode.setOnNewMemberHandler( (address) -> {
+    System.out.println(addresss + " connected to first node");
+  });
+  
+  firstNode.start();
+  
+  for(int i = 1; i <= 20; i++) {
+    Gossip g = new Gossip(new InetSocketAddress("127.0.0.1", 8080 + i), new InetSocketAddress("127.0.0.1", 8080 + i - 1), config);
+    g.start();
+  }
+}
+
+```
