@@ -30,8 +30,6 @@ public class Network {
 	
 	public void sendMessage(Member target, String message) {
 		sendMessage(target, message.getBytes());
-		
-		System.out.println("send message '" + message + "' to " + target.getAddress() + ":" + target.getPort());
 	}
 	
 	public void sendMessage(Member target, Member message) {
@@ -77,17 +75,12 @@ public class Network {
 			}
 			iStream.close();
 			
-			return message;
-			
-			//return new String(receivePacket.getData(), 0, receivePacket.getLength());
+			return message;			
 		} catch (IOException e) {
 			System.out.println("Could not properly receive message");
 			e.printStackTrace();
 		}
 		return null;
-		
-		//assert false;
-		//return "";
 	}
 	
 }
