@@ -20,11 +20,8 @@ public class Network {
 	public Network(int portToListenOn) {
 		try {
 			socket = new DatagramSocket(portToListenOn);
-		} catch (SocketException e) {
-			e.printStackTrace();
-			
-			System.out.println("Could not initialize datagram socket. Exiting application");
-			System.exit(-1);
+		} catch (SocketException e) {			
+			Gossip.logger.log("Could not initialize datagram socket because: " + e.getMessage());
 		}
 	}
 	
@@ -39,7 +36,7 @@ public class Network {
 			oo.writeObject(message);
 			oo.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Gossip.logger.log("Could not send " + message.getNetworkMessage() + " to [" + target.getSocketAddress() + "] because: " + e.getMessage());
 		}
 
 		byte[] serializedMessage = bStream.toByteArray();
@@ -54,7 +51,7 @@ public class Network {
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
-			System.out.println("Fatal error trying to send: " + packet);
+			Gossip.logger.log("Fatal error trying to send: " + packet + " to [" + target.getSocketAddress() + "]");
 			e.printStackTrace();
 			
 			System.exit(-1);
@@ -70,15 +67,13 @@ public class Network {
 			try {
 				message = (Member) iStream.readObject();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Gossip.logger.log("Error casting Gossip network data to Member class because: " + e.getMessage());
 			}
 			iStream.close();
 			
 			return message;			
 		} catch (IOException e) {
-			System.out.println("Could not properly receive message");
-			e.printStackTrace();
+			Gossip.logger.log("Could not properly receive message because: " + e.getMessage());
 		}
 		return null;
 	}
