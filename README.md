@@ -18,12 +18,22 @@ void setOnFailedMemberHandler(GossipUpdater onFailedMember)
 void setOnRevivedMemberHandler(GossipUpdater onRevivedMember)
 void setOnRemoveMemberHandler(GossipUpdater onRemovedMember)
 ````
+Class Methods
+```Java
+static void setLogger(Logger logger)
+```
+
 
 # Example
 ```Java
 public static void main(String[] args) {
     Config config = new Config( Duration.ofSeconds(2), Duration.ofSeconds(2), 
                                 Duration.ofMillis(500), Duration.ofMillis(200), 3);
+    
+    // Set how the error messages will be handled.
+    Gossip.setLogger((message) -> {
+        System.out.println("Gossip Error: " + message);
+    });
   
     Gossip firstNode = new Gossip(new InetSocketAddress("127.0.0.1", 8080), config);
   

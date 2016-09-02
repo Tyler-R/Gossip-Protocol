@@ -2,7 +2,6 @@ package main.java.gossip;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,6 +10,9 @@ public class Gossip {
 	public final InetSocketAddress listeningAddress;
 
 	private Network network;
+	
+	// instantiate a default logger that does not log anything
+	static Logger logger = (message) -> {};
 
 	private Member self = null;
 	private ConcurrentHashMap<String, Member> memberList = new ConcurrentHashMap<String, Member>();
@@ -266,5 +268,11 @@ public class Gossip {
 
 	public void setOnRemoveMemberHandler(GossipUpdater onRemovedMember) {
 		this.onRemovedMember = onRemovedMember;
+	}
+	
+	public static void setLogger(Logger newLogger) {
+		if (newLogger != null) {
+			logger = newLogger;
+		}
 	}
 }
