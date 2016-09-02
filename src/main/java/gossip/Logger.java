@@ -2,6 +2,6 @@ package main.java.gossip;
 
 public interface Logger {
 
-	void Log(String message);
+	void log(String message);
 	
 }
