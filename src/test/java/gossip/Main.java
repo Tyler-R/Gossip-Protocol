@@ -6,8 +6,12 @@ import main.java.gossip.Config;
 import main.java.gossip.Gossip;
 
 public class Main {
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		Config config = new Config(Duration.ofSeconds(2), Duration.ofSeconds(2), Duration.ofMillis(500), Duration.ofMillis(200), 3);
+		
+		Gossip.setLogger((message) -> {
+			System.out.println("Gossip Error: " + message);
+		});
 		
 		Gossip gossip = new Gossip(new InetSocketAddress("127.0.0.1", 8081), new InetSocketAddress("127.0.0.1", 8080), config);
 		Gossip g = new Gossip(new InetSocketAddress("127.0.0.1", 8080), new InetSocketAddress("127.0.0.1", 8081), config);
