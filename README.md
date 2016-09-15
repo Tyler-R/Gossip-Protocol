@@ -27,8 +27,13 @@ static void setLogger(Logger logger)
 # Example
 ```Java
 public static void main(String[] args) {
-    Config config = new Config( Duration.ofSeconds(2), Duration.ofSeconds(2), 
-                                Duration.ofMillis(500), Duration.ofMillis(200), 3);
+    Config config = new Config( 
+            Duration.ofSeconds(2), // time between receiving the last heartbeat and marking a member as failing
+            Duration.ofSeconds(2), // time between marking a member as failed and removing it from the list
+            Duration.ofMillis(500), // how often the member list is broadcast to other members
+            Duration.ofMillis(200), // how often the Gossip protocol checks if any members have failed
+            3                       // the number of nodes to send the membership list to when broadcasting.
+        );
     
     // Set how the error messages will be handled.
     Gossip.setLogger((message) -> {
